@@ -26,6 +26,8 @@ WORKDIR /app
 RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf && \
     echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
+RUN sed -i -e"s/^max_connections = 100.*$/max_connections = 1000/" /etc/postgresql/9.5/main/postgresql.conf
+
 # Nominatim install
 ENV NOMINATIM_VERSION v.2.5.0
 RUN git clone --recursive https://github.com/openstreetmap/Nominatim ./src
@@ -49,7 +51,7 @@ RUN service postgresql start && \
     sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim" && \
     useradd -m -p password1234 nominatim && \
     chown -R nominatim:nominatim ./src && \
-    sudo -u nominatim ./src/utils/setup.php --osm-file /app/src/data.osm.pbf --all --threads 2 && \
+    sudo -u nominatim ./src/utils/setup.php --osm-file /app/src/data.osm.pbf --all --threads 64 && \
     service postgresql stop
 
 EXPOSE 5432
