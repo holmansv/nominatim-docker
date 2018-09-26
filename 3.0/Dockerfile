@@ -15,6 +15,7 @@ RUN apt-get -y update -qq && \
     apache2 php php-pgsql libapache2-mod-php php-pear php-db \
     php-intl git curl sudo \
     python-pip libboost-python-dev \
+    gdal-python unzip \
     osmosis && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -43,15 +44,18 @@ COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Load initial data
 ARG PBF_DATA=http://download.geofabrik.de/north-america-latest.osm.pbf
+ARG TIGER_DATA=https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz
 RUN curl -L -f $PBF_DATA --create-dirs -o /app/src/data.osm.pbf
+RUN curl -L -f $TIGER_DATA --create-dirs -o /app/src/data/tiger2017.tar.gz
 RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
+RUN tar -xzf tiger2017.tar.gz -C /app/src/data/
 RUN service postgresql start && \
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim && \
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data && \
     sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim" && \
     useradd -m -p password1234 nominatim && \
     chown -R nominatim:nominatim ./src && \
-    sudo -u nominatim ./src/build/utils/setup.php --osm-file /app/src/data.osm.pbf --all --threads 64 && \
+    sudo -u nominatim ./src/build/utils/setup.php --osm-file /app/src/data.osm.pbf --all --import-tiger-data --threads 64 && \
     service postgresql stop
 
 EXPOSE 5432
