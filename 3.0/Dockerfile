@@ -15,7 +15,7 @@ RUN apt-get -y update -qq && \
     apache2 php php-pgsql libapache2-mod-php php-pear php-db \
     php-intl git curl sudo \
     python-pip libboost-python-dev \
-    gdal-python unzip \
+    gdal-bin python-gdal unzip \
     osmosis && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \

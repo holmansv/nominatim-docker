@@ -11,7 +11,8 @@
 
 Run [http://wiki.openstreetmap.org/wiki/Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim) in a docker container. Clones the current master and builds it. This is always the latest version, be cautious as it may be unstable.
 
-Uses Ubuntu 14.04 and PostgreSQL 9.3
+The original fork used Ubuntu 14.04, but we have to use Ubuntu 18.04 to get the newer versions of Docker installed; the newer versions of Docker are not compatible with the kernel version from 14.04.  
+Also uses PostgreSQL 9.3
 
 # Country
 To check that everything is set up correctly, download and load to Postgres PBF file with minimal size - Europe/Monacco (latest) from geofabrik.de.
