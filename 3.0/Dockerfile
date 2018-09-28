@@ -48,7 +48,7 @@ ARG TIGER_DATA=https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.g
 RUN curl -L -f $PBF_DATA --create-dirs -o /app/src/data.osm.pbf
 RUN curl -L -f $TIGER_DATA --create-dirs -o /app/src/data/tiger2017.tar.gz
 RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
-RUN tar -xzf tiger2017.tar.gz -C /app/src/data/
+RUN tar -xzf /app/src/data/tiger2017.tar.gz -C /app/src/data/
 RUN service postgresql start && \
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='nominatim'" | grep -q 1 || sudo -u postgres createuser -s nominatim && \
     sudo -u postgres psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'" | grep -q 1 || sudo -u postgres createuser -SDR www-data && \
