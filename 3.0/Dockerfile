@@ -56,7 +56,8 @@ RUN service postgresql start && \
     useradd -m -p password1234 nominatim && \
     chown -R nominatim:nominatim ./src && \
     sudo -u nominatim ./src/build/utils/setup.php --osm-file /app/src/data.osm.pbf --all --import-tiger-data --threads 64 && \
-    service postgresql stop
+    sudo -u nominatim ./src/build/utils/setup.php --create-functions --enable-diff-updates --create-partition-functions && \
+    service postgresql stop 
 
 EXPOSE 5432
 EXPOSE 8080
