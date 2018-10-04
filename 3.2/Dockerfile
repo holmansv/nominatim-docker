@@ -16,6 +16,7 @@ RUN apt-get -y update -qq && \
     apache2 php php-pgsql libapache2-mod-php php-pear php-db \
     php-intl git curl sudo \
     python-pip libboost-python-dev \
+    python-gdal unzip \
     osmosis && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -42,6 +43,8 @@ COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Load initial data
 RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
+RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz && \
+    tar -xzf /app/src/data/tiger.tgz /app/src/data/
 
 EXPOSE 5432
 EXPOSE 8080
