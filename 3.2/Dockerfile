@@ -43,8 +43,8 @@ COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
 
 # Load initial data
 RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
-RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz && \
-    tar -xzf /app/src/data/tiger.tgz /app/src/data/
+RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
+RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
 
 EXPOSE 5432
 EXPOSE 8080
