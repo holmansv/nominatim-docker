@@ -25,8 +25,8 @@ RUN apt-get -y update -qq && \
 WORKDIR /app
 
 # Configure postgres
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf
+COPY postgresql.conf /etc/postgresql/9.5/main/
 
 # Nominatim install
 ENV NOMINATIM_VERSION v3.2.0
