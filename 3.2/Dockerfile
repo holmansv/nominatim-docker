@@ -34,9 +34,6 @@ RUN git clone --recursive https://github.com/openstreetmap/Nominatim ./src
 RUN cd ./src && git checkout tags/$NOMINATIM_VERSION && git submodule update --recursive --init && \
     mkdir build && cd build && cmake .. && make
 
-# Osmium install to run continuous updates
-RUN pip install osmium
-
 # Apache configure
 COPY local.php /app/src/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
