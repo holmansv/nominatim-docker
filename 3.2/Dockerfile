@@ -41,21 +41,21 @@ RUN apt-get install -y postgresql-9.5-postgis-2.2 postgresql-contrib-9.5 \
     python-gdal unzip \
     osmosis
 
+# Load initial data
+RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
+RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
+RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
+
+# Apache configure
+COPY local.php /app/src/build/settings/local.php
+COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
+
 # Configure postgres
 RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
 RUN echo "max_wal_size = 100GB" >> /etc/postgresql/9.5/main/postgresql.conf
 RUN echo "min_wal_size = 1GB" >> /etc/postgresql/9.5/main/postgresql.conf
 RUN sed -i -e"s/^max_connections = 100.*$/max_connections = 1100/" /etc/postgresql/9.5/main/postgresql.conf
-
-# Apache configure
-COPY local.php /app/src/build/settings/local.php
-COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
-
-# Load initial data
-RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
-RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
-RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
 
 EXPOSE 5432
 EXPOSE 8080
