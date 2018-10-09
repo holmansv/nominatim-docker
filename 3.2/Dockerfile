@@ -46,6 +46,10 @@ RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/count
 RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
 RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
 
+# Correct the Error: could not open temporary statistics file "/var/run/postgresql/9.5-main.pg_stat_tmp/global.tmp": No such file or directory
+RUN mkdir -p /var/run/postgresql/9.5-main.pg_stat_tmp
+RUN chown postgres:postgres /var/run/postgresql/9.5-main.pg_stat_tmp -R
+
 # Apache configure
 COPY local.php /app/src/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
