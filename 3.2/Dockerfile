@@ -57,21 +57,23 @@ COPY mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Postgres 9.5 config settings
 RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf
-RUN echo "listen_addresses='*'" >> /etc/postgresql/9.5/main/postgresql.conf
+RUN sed -i -e"s/^max_connections = 100.*$/max_connections = 1100/" /etc/postgresql/9.5/main/postgresql.conf
 ##### write-ahead log settings:
 # https://www.postgresql.org/docs/9.5/static/runtime-config-wal.html
-RUN echo "max_wal_size = 100GB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "min_wal_size = 1GB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "synchronous_commit = off" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "checkpoint_timeout = 1h" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "checkpoint_completion_target = 0.9" >> /etc/postgresql/9.5/main/postgresql.conf
 ##### resource consumption: 
 # https://www.postgresql.org/docs/9.5/static/runtime-config-resource.html
-RUN echo "maintenance_work_mem = 15GB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "work_mem = 100MB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "shared_buffers = 4GB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN echo "effective_cache_size = 48GB" >> /etc/postgresql/9.5/main/postgresql.conf
-RUN sed -i -e"s/^max_connections = 100.*$/max_connections = 1100/" /etc/postgresql/9.5/main/postgresql.conf
+RUN echo $"\n\
+listen_addresses='*' \n\
+max_wal_size = 100GB \n\
+min_wal_size = 1GB \n\
+synchronous_commit = off \n\
+checkpoint_timeout = 1h \n\
+checkpoint_completion_target = 0.9 \n\
+maintenance_work_mem = 15GB \n\
+work_mem = 100MB \n\
+shared_buffers = 4GB \n\
+effective_cache_size = 48GB \n\
+" >> /etc/postgresql/9.5/main/postgresql.conf
 
 EXPOSE 5432
 EXPOSE 8080
