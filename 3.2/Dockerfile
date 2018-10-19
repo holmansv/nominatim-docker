@@ -53,6 +53,7 @@ RUN chown postgres:postgres /var/run/postgresql/9.5-main.pg_stat_tmp -R
 # Apache configure
 COPY local.php /app/src/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
+COPY mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Postgres 9.5 config settings
 RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.5/main/pg_hba.conf
