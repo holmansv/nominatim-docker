@@ -62,7 +62,7 @@ RUN sed -i -e"s/^max_connections = 100.*$/max_connections = 1100/" /etc/postgres
 # https://www.postgresql.org/docs/9.5/static/runtime-config-wal.html
 ##### resource consumption: 
 # https://www.postgresql.org/docs/9.5/static/runtime-config-resource.html
-RUN echo $"\n\
+RUN echo "\n\
 listen_addresses='*' \n\
 max_wal_size = 100GB \n\
 min_wal_size = 1GB \n\
