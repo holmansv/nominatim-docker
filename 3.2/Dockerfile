@@ -43,7 +43,7 @@ RUN apt-get install -y postgresql-9.5-postgis-2.2 postgresql-contrib-9.5 \
 
 # Load initial data
 RUN curl http://www.nominatim.org/data/country_grid.sql.gz > /app/src/data/country_osm_grid.sql.gz
-RUN curl https://nominatim.org/data/tiger2017-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
+RUN curl https://nominatim.org/data/tiger2018-nominatim-preprocessed.tar.gz > /app/src/data/tiger.tgz 
 RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
 
 # Correct the Error: could not open temporary statistics file "/var/run/postgresql/9.5-main.pg_stat_tmp/global.tmp": No such file or directory
@@ -82,5 +82,7 @@ COPY start.sh /app/start.sh
 COPY startapache.sh /app/startapache.sh
 COPY startpostgres.sh /app/startpostgres.sh
 COPY init.sh /app/init.sh
-
+COPY load-osm.sh /app/load-osm.sh
+COPY backup.sh /app/backup.sh
+COPY restore.sh /app/restore.sh
 
