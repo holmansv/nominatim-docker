@@ -6,9 +6,8 @@ if [ "$BACKUPFILE" = "" ] ; then
   exit 1
 fi
 
-echo "[INFO] Starting restoration of postgres database. This could take a while..."
+echo "[INFO] Starting restoration of postgres database from file '$BACKUPFILE'. This could take a while..."
 
-gunzip $BACKUPFILE
-sudo -u postgres -i psql -f $BACKUPFILE postgres
+sudo -u postgres -i psql --file=$BACKUPFILE postgres
 
 echo "[INFO] Finished restoring postgres database."
