@@ -23,6 +23,7 @@ fi
 echo "[INFO] Importing OSM data file '$OSMFILE'..."
 export  PGDATA=/data/$PGDIR  && \
 sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR start && \
+sleep 2 && \
 sudo -u postgres psql postgres -c "DROP DATABASE IF EXISTS nominatim" && \
 sudo -u nominatim /app/src/build/utils/setup.php --osm-file $OSMFILE --all --threads $THREADS && \
 # sudo -u postgres psql postgres -tAc "CREATE INDEX nodes_index ON public.planet_osm_ways USING gin (nodes);"
@@ -34,6 +35,7 @@ if [ -d /app/src/data/tiger ] ; then
   echo "[INFO] Found extracted Tiger data at /app/src/data/tiger; importing Tiger data ..."
   export  PGDATA=/data/$PGDIR  && \
   sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR start && \
+  sleep 2 && \
   sudo -u nominatim /app/src/build/utils/setup.php --import-tiger-data && \
   sudo -u nominatim /app/src/build/utils/setup.php --create-functions --enable-diff-updates --create-partition-functions && \
   sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR stop && \
