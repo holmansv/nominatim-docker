@@ -83,6 +83,5 @@ COPY startapache.sh /app/startapache.sh
 COPY startpostgres.sh /app/startpostgres.sh
 COPY init.sh /app/init.sh
 COPY load-osm.sh /app/load-osm.sh
-COPY backup.sh /app/backup.sh
 COPY restore.sh /app/restore.sh
 
