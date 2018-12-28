@@ -50,6 +50,9 @@ RUN tar -xzf /app/src/data/tiger.tgz -C /app/src/data/
 RUN mkdir -p /var/run/postgresql/9.5-main.pg_stat_tmp
 RUN chown postgres:postgres /var/run/postgresql/9.5-main.pg_stat_tmp -R
 
+# Make a directory for exporting data backups that would be compatible with other processes on the machine.
+RUN mkdir -p /var/exports && chmod 777 /var/exports
+
 # Apache configure
 COPY local.php /app/src/build/settings/local.php
 COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf

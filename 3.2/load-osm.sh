@@ -20,6 +20,9 @@ if [ "$THREADS" = "" ] ; then
   exit 1
 fi
 
+BACKUPDIR=/var/exports     # must be same directory as in dockerfile
+BACKUPFILE=pgdumpall.dump
+
 echo "[INFO] Importing OSM data file '$OSMFILE'..."
 export  PGDATA=/data/$PGDIR  && \
 sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR start && \
@@ -33,9 +36,11 @@ sudo -u nominatim /app/src/build/utils/setup.php --osm-file $OSMFILE --all --thr
 # sudo -u postgres psql postgres -tAc "CREATE INDEX nodes_index ON public.planet_osm_ways USING gin (nodes);"
 sudo -u nominatim /app/src/build/utils/setup.php --import-tiger-data && \
 sudo -u nominatim /app/src/build/utils/setup.php --create-functions --enable-diff-updates --create-partition-functions && \
-sudo -u postgres -i pg_dumpall --file=$FILENAME && \
-sudo mv /var/lib/postgresql/9.5/main/$FILENAME /data/$PGDIR/$FILENAME && \
+echo "[INFO] Finished importing OSM and Tiger data. Creating a backup at $BACKUPDIR/$BACKUPFILE" && \
+sudo -u postgres -i pg_dumpall --file=$BACKUPFILE && \
+sudo mv /var/lib/postgresql/$BACKUPFILE $BACKUPDIR/$BACKUPFILE && \
+sudo chmod 777 $BACKUPDIR/$BACKUPFILE && \
 sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR stop && \
 sudo chown -R postgres:postgres /data/$PGDIR
-echo "[INFO] Finished importing OSM data."
+echo "[INFO] Finished."
 

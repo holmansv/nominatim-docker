@@ -10,20 +10,22 @@
 
 1. Initialize Nominatim Database
    ```
-   docker run -t -v /srv/nominatim:/data <imageId> sh /app/init.sh postgresdata
+   docker run -t -v /srv/nominatim:/data ImageId sh /app/init.sh postgresdata
    ```
 
 1. Populate the db with a transformation of the OSM data into Nominatim format:   
    ```
-   docker run -t -v /srv/nominatim:/data <imageId> sh /app/load-osm.sh postgresdata /data/monaco-latest.osm.pbf 4
+   docker run -t -v /srv/nominatim:/data -v /srv/tmp/build/backup:/var/exports ImageId sh /app/load-osm.sh postgresdata /data/monaco-latest.osm.pbf 4
    ```
    Where 4 is the number of threads to use during import. In general the import of data in postgres is a very time consuming
    process that may take hours or days. If you run this process on a multiprocessor system make sure that it makes the best use
-   of it. You can delete the `/srv/nominatim/<country>.osm.pbf` once the import is finished.
+   of it. You can delete the `/srv/nominatim/<country>.osm.pbf` once the import is finished.  
+
+   This script makes a backup immediately after creating the database and saves it to a file named `pgdumpall.dump` in the volume mounted to `/var/exports`.  
 
 1. Export an archive copy of the database from Postgres:  
    ```
-   docker run -t -v /srv/nominatim:/data 46176800190d sh /app/backup.sh /srv/tmp
+   docker run -t -v /srv/nominatim:/data <ImageId> sh /app/backup.sh /srv/tmp
    ```
    This command deposits a file named `pgdumpall.sql` in the location specified to the script (in above case, `/srv/tmp`).  
 
