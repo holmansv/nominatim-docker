@@ -21,11 +21,11 @@
    If you run this process on a multiprocessor system make sure that it makes the best use of it by tuning the number of threads to be number of cores on the machine -1.
    You can delete the `/srv/nominatim/<country>.osm.pbf` once the import is finished.   
 
-   This script makes a backup immediately after creating the database and saves it to a file named `pgdumpall.dump` in the volume mounted to `/var/exports`. It will have group and user ownership specified in the `load-osm.sh`.  
+   This script makes a backup immediately after creating the database and saves it to a file named `pgdumpall.sql` in the volume mounted to `/var/exports`. It will have group and user ownership specified in the `load-osm.sh`.  
 
 ## Restoring The Postgres Database
    ```
-   docker run -t -v /srv/nominatim:/data -v /srv/tmp/build/backup:/var/exports ImageId sh /app/restore.sh postgresdata /var/exports/pgdumpall.dump
+   docker run -t -v /srv/nominatim/postgresdata:/var/lib/postgresql/9.5/main -v /srv/tmp/build/backup:/var/exports ImageId sh /app/restore.sh /var/exports/pgdumpall.sql
    ```
 
 ## Boot Up the Nominatim Server

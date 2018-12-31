@@ -33,7 +33,7 @@ if [ "$BACKUP_FILE_OWNER_GID" = "" ] ; then
 fi
 
 BACKUPDIR=/var/exports     # must be same directory as in dockerfile
-BACKUPFILE=pgdumpall.dump
+BACKUPFILE=pgdumpall.sql
 
 echo "[INFO] Importing OSM data file '$OSMFILE'..."
 export  PGDATA=/data/$PGDIR  && \
