@@ -2,6 +2,8 @@
 PGDIR=$1 ; shift
 OSMFILE=$1 ; shift
 THREADS=$1 ; shift
+BACKUP_FILE_OWNER_UID=$1 ; shift
+BACKUP_FILE_OWNER_GID=$1 ; shift
 
 echo "[INFO] Starting script to load osm data."
 
@@ -17,6 +19,16 @@ fi
 
 if [ "$THREADS" = "" ] ; then
   echo "[ERROR] Number of threads must be specified."
+  exit 1
+fi
+
+if [ "$BACKUP_FILE_OWNER_UID" = "" ] ; then
+  echo "[ERROR] Must provide a numeric USER id to change ownership of the backup file."
+  exit 1
+fi
+
+if [ "$BACKUP_FILE_OWNER_GID" = "" ] ; then
+  echo "[ERROR] Must provide a numeric GROUP id to change ownership of the backup file."
   exit 1
 fi
 
@@ -40,6 +52,7 @@ echo "[INFO] Finished importing OSM and Tiger data. Creating a backup at $BACKUP
 sudo -u postgres -i pg_dumpall --file=$BACKUPFILE && \
 sudo mv /var/lib/postgresql/$BACKUPFILE $BACKUPDIR/$BACKUPFILE && \
 sudo chmod 777 $BACKUPDIR/$BACKUPFILE && \
+sudo chown $BACKUP_FILE_OWNER_UID:$BACKUP_FILE_OWNER_GID $BACKUPDIR/$BACKUPFILE && \
 sudo -u postgres /usr/lib/postgresql/9.5/bin/pg_ctl -D /data/$PGDIR stop && \
 sudo chown -R postgres:postgres /data/$PGDIR
 echo "[INFO] Finished."
