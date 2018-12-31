@@ -25,7 +25,7 @@
 
 ## Restoring The Postgres Database
    ```
-   docker run -t -v /srv/nominatim:/data -v /srv/tmp/build/backup:/var/exports <ImageId> sh /app/restore.sh /var/exports/pgdumpall.dump
+   docker run -t -v /srv/nominatim:/data -v /srv/tmp/build/backup:/var/exports ImageId sh /app/restore.sh postgresdata /var/exports/pgdumpall.dump
    ```
 
 ## Boot Up the Nominatim Server
