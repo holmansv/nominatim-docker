@@ -7,6 +7,11 @@ fi
 
 echo "[INFO] init.sh - setting up an empty postgres database ..."
 
+if [ -e /data/$PGDIR ] ; then
+  echo "[INFO] The specified directory '/data/$PGDIR' is not empty. Forcibly removing it before continuing..."
+  sudo rm -rf /data/$PGDIR
+fi
+
 mkdir -p /data/$PGDIR
 
 chown postgres:postgres /data/$PGDIR 

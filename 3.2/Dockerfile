@@ -88,3 +88,4 @@ COPY init.sh /app/init.sh
 COPY load-osm.sh /app/load-osm.sh
 COPY restore.sh /app/restore.sh
 
+
