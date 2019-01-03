@@ -46,8 +46,8 @@ useradd -m -p password1234 nominatim && \
 chown -R nominatim:nominatim /app/src && \
 sudo -u nominatim /app/src/build/utils/setup.php --osm-file $OSMFILE --all --threads $THREADS && \
 # sudo -u postgres psql postgres -tAc "CREATE INDEX nodes_index ON public.planet_osm_ways USING gin (nodes);"
-###sudo -u nominatim /app/src/build/utils/setup.php --import-tiger-data && \
-###sudo -u nominatim /app/src/build/utils/setup.php --create-functions --enable-diff-updates --create-partition-functions && \
+sudo -u nominatim /app/src/build/utils/setup.php --import-tiger-data && \
+sudo -u nominatim /app/src/build/utils/setup.php --create-functions --enable-diff-updates --create-partition-functions && \
 echo "[INFO] Finished importing OSM and Tiger data. Creating a backup at $BACKUPDIR/$BACKUPFILE" && \
 sudo -u postgres -i pg_dumpall --file=$BACKUPFILE && \
 sudo mv /var/lib/postgresql/$BACKUPFILE $BACKUPDIR/$BACKUPFILE && \
