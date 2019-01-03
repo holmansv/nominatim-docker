@@ -1,27 +1,53 @@
 # Nominatim Docker (Nominatim version 3.2)
 
-1. Build
+## Building The Docker Image
   ```
   docker build -t nominatim .
   ```
-2. Copy <your_country>.osm.pbf to a local directory (i.e. /srv/nominatim)
 
-3. Initialize Nominatim Database
-  ```
-  docker run -t -v /srv/nominatim:/data <ImageId> sh /app/init.sh /data/north-america-latest.osm.pbf postgresdata 4
-  ```
-  Where 4 is the number of threads to use during import. In general the import of data in postgres is a very time consuming
-  process that may take hours or days. If you run this process on a multiprocessor system make sure that it makes the best use
-  of it. You can delete the /home/me/nominatimdata/merged.osm.pbf once the import is finished.
+## Building A Copy Of The Postgres Database
+1. Copy `<country>.osm.pbf` to a local directory (i.e. /srv/nominatim)
 
+1. Initialize Nominatim Database
+   ```
+   docker run --rm -t -v /srv/nominatim:/data ImageId sh /app/init.sh postgresdata
+   ```
 
-4. After the import is finished the /home/me/nominatimdata/postgresdata folder will contain the full postgress binaries of
+1. Populate the db with a transformation of the OSM data into Nominatim format:   
+   ```
+   docker run --rm -t -v /srv/nominatim:/data -v /srv/tmp/build/backup:/var/exports ImageId sh /app/load-osm.sh postgresdata /data/monaco-latest.osm.pbf 4 $(id -u jenkins) $(id -g jenkins)
+   ```
+   In general the import of data in postgres is a very time consuming process that may take hours or days.
+   If you run this process on a multiprocessor system make sure that it makes the best use of it by tuning the number of threads to be number of cores on the machine -1.
+   You can delete the `/srv/nominatim/<country>.osm.pbf` once the import is finished.   
+
+   This script makes a backup immediately after creating the database and saves it to a file named `pgdumpall.sql` in the volume mounted to `/var/exports`. It will have group and user ownership specified in the `load-osm.sh`.  
+
+## Restoring The Postgres Database
+1. Ensure the docker container is stopped, so that postgres is not running. The `ContainerId` must be replaced.
+   ```
+   docker stop ContainerId
+   ```
+
+1. Initialize a new empty data directory. **NOTE:** this will forcibly remove all data at /data/postgresdata if it exists, prior to initializing the database.  
+   ```
+   docker run --rm -t -v /srv/nominatim:/data ImageId sh /app/init.sh postgresdata
+   ```
+
+1. Import the data from the backup file.
+   ```
+   docker run --rm -t -v /srv/nominatim/postgresdata:/var/lib/postgresql/9.5/main -v /srv/tmp/build/backup:/var/exports ImageId sh /app/restore.sh /var/exports/pgdumpall.sql
+   ```
+
+## Boot Up the Nominatim Server
+   After the import is finished the `/srv/nominatim/postgresdata` folder will contain the full postgress binaries of
    a postgis/nominatim database. The easiest way to start the nominatim as a single node is the following:
    ```
    docker run --restart=always -p 5432:5432 -p 8080:8080 -d -v /srv/nominatim/postgresdata:/var/lib/postgresql/9.5/main <ImageId> sh /app/start.sh
    ```
 
-5. Advanced configuration. If necessary you can split the osm installation into a database and restservice layer
+## Advanced Configuration
+If necessary you can split the osm installation into a database and restservice layer.  
 
    In order to set the  nominatib-db only node:
 
